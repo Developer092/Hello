@@ -1,0 +1,27 @@
+def water_jug(jug1_cap, jug2_cap, target):
+    jug1 = 0
+    jug2 = 0
+    steps = []
+    
+    while jug1 != target and jug2 != target:
+        if jug1 == 0:
+            jug1 = jug1_cap
+            steps.append(f"Fill {jug1_cap}-liter jug")
+        elif jug2 == jug2_cap:
+            jug2 = 0
+            steps.append(f"Empty {jug2_cap}-liter jug")
+        else:
+            pour = min(jug1, jug2_cap - jug2)
+            jug1 -= pour
+            jug2 += pour
+            steps.append(f"Pour {pour} liters from {jug1_cap}-liter jug to {jug2_cap}-liter jug")
+    
+    return steps
+
+# Example usage
+jug1_size = 4
+jug2_size = 3
+target_amount = 2
+
+solution = water_jug(jug1_size, jug2_size, target_amount)
+print("\n".join(f"Step {i+1}: {action}" for i, action in enumerate(solution)))

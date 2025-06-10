@@ -1,0 +1,78 @@
+from collections import deque
+
+def print_puzzle(state):
+    """Print the puzzle state in a 3x3 grid"""
+    for row in state:
+        print(' '.join(str(x) if x != 0 else ' ' for x in row))
+    print()
+
+def find_blank(state):
+    """Find the position of the blank tile (0)"""
+    for i in range(3):
+        for j in range(3):
+            if state[i][j] == 0:
+                return i, j
+
+def get_moves(state):
+    """Generate all possible next moves"""
+    moves = []
+    blank_i, blank_j = find_blank(state)
+    
+    # Possible moves: up, down, left, right
+    directions = [(-1, 0, 'Up'), (1, 0, 'Down'), (0, -1, 'Left'), (0, 1, 'Right')]
+    
+    for di, dj, move_name in directions:
+        new_i, new_j = blank_i + di, blank_j + dj
+        if 0 <= new_i < 3 and 0 <= new_j < 3:
+            # Create new state by swapping blank with adjacent tile
+            new_state = [row[:] for row in state]
+            new_state[blank_i][blank_j], new_state[new_i][new_j] = new_state[new_i][new_j], new_state[blank_i][blank_j]
+            moves.append((new_state, move_name))
+    return moves
+
+def solve_8puzzle(initial_state):
+    """Solve the 8-puzzle using BFS"""
+    goal_state = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
+    
+    if initial_state == goal_state:
+        return []  # Already solved
+    
+    visited = set()
+    queue = deque()
+    queue.append((initial_state, []))  # (state, path)
+    
+    while queue:
+        current_state, path = queue.popleft()
+        
+        # Convert state to tuple for hashing
+        state_tuple = tuple(tuple(row) for row in current_state)
+        if state_tuple in visited:
+            continue
+        visited.add(state_tuple)
+        
+        for next_state, move in get_moves(current_state):
+            if next_state == goal_state:
+                return path + [move]
+            queue.append((next_state, path + [move]))
+    
+    return None  # No solution found
+
+# Example usage
+if __name__ == "__main__":
+    # 0 represents the blank space
+    initial_state = [
+        [1, 2, 3],
+        [4, 0, 6],
+        [7, 5, 8]
+    ]
+    
+    print("Initial puzzle state:")
+    print_puzzle(initial_state)
+    
+    solution = solve_8puzzle(initial_state)
+    
+    if solution:
+        print(f"Solution found in {len(solution)} moves:")
+        print(" → ".join(solution))
+    else:
+        print("No solution exists for this puzzle configuration.")

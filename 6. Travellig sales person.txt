@@ -1,0 +1,54 @@
+def calculate_distance(path, distances):
+    """Calculate total distance for a given path"""
+    total = 0
+    for i in range(len(path)-1):
+        total += distances[path[i]][path[i+1]]
+    total += distances[path[-1]][path[0]]  # Return to start
+    return total
+
+def generate_permutations(arr):
+    """Generate all permutations of an array"""
+    if len(arr) == 1:
+        return [arr]
+    perms = []
+    for i in range(len(arr)):
+        first = arr[i]
+        rest = arr[:i] + arr[i+1:]
+        for p in generate_permutations(rest):
+            perms.append([first] + p)
+    return perms
+
+def tsp_simple(distances):
+    """Solve TSP using brute-force approach"""
+    num_cities = len(distances)
+    cities = list(range(num_cities))
+    
+    shortest_path = None
+    min_distance = float('inf')
+    
+    # Generate all possible permutations starting with city 0
+    for perm in generate_permutations(cities[1:]):
+        current_path = [cities[0]] + perm
+        current_distance = calculate_distance(current_path, distances)
+        
+        if current_distance < min_distance:
+            min_distance = current_distance
+            shortest_path = current_path
+    
+    return shortest_path, min_distance
+
+# Example usage
+if __name__ == "__main__":
+    # Distance matrix between cities (example with 4 cities)
+    # City 0 to City 0 is 0, City 0 to City 1 is 10, etc.
+    distances = [
+        [0, 10, 15, 20],
+        [10, 0, 35, 25],
+        [15, 35, 0, 30],
+        [20, 25, 30, 0]
+    ]
+    
+    path, distance = tsp_simple(distances)
+    
+    print("Optimal path:", path)
+    print("Total distance:", distance)
