@@ -1,0 +1,46 @@
+# Initial state
+monkey_at = "floor"
+box_at = "corner"
+banana_at = "ceiling"
+has_banana = False
+
+# Action functions
+def move_monkey(to):
+    global monkey_at
+    print(f"Monkey moves to {to}")
+    monkey_at = to
+
+def move_box(to):
+    global box_at, monkey_at
+    if monkey_at == box_at:
+        print(f"Monkey pushes box to {to}")
+        box_at = to
+        monkey_at = to
+    else:
+        print("Monkey needs to be at the box to move it")
+
+def climb_box():
+    global has_banana
+    if monkey_at == box_at and box_at == banana_at:
+        print("Monkey climbs the box and grabs the banana!")
+        has_banana = True
+    else:
+        print("Monkey can't reach the banana yet")
+
+# Solve the problem
+print("=== Monkey wants the banana ===")
+
+# Step 1: Monkey goes to the box
+move_monkey(box_at)
+
+# Step 2: Monkey pushes box under banana
+move_box(banana_at)
+
+# Step 3: Monkey climbs box and gets banana
+climb_box()
+
+# Result
+if has_banana:
+    print("Success! Monkey got the banana!")
+else:
+    print("Monkey failed to get the banana")
